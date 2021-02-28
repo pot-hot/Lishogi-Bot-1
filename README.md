@@ -1,4 +1,4 @@
-# Thebotplayingshogi
+# The Bot Playing Shogi
 
 This is the code of [@TheB0t-PlAyInG-sH0gI](https://lishogi.org/@/TheB0t-PlAyInG-sH0gI) in [lishogi.org](https://lishogi.org)
 
