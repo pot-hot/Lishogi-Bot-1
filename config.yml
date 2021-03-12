@@ -1,4 +1,4 @@
-token: "EoV8uifKdnTY3TOm"    # lishogi OAuth2 Token with 'play as bot' enabled
+token: "souwhFWilz9O43sX"    # lishogi OAuth2 Token with 'play as bot' enabled
 url: "https://lishogi.org/"  # lishogi base URL
 
 engine:                      # engine settings
@@ -13,6 +13,8 @@ engine:                      # engine settings
     Move Overhead: 100       # increase if your bot flags games too often
     Threads: 1               # max CPU threads the engine can use
     Hash: 256                # max memory (in megabytes) the engine can allocate
+    Use NNUE: true           # allow bot to use neural networks
+    EvalFile: shogi.nnue     # shogi neural networks file
 #   go_commands:             # additional options to pass to the USI go command
 #     nodes: 1               # Search so many nodes only.
 #     depth: 5               # Search depth ply only.
