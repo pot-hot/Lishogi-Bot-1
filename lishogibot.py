@@ -7,22 +7,13 @@ import lishogi
 import logging
 import multiprocessing
 from multiprocessing import Process
-import traceback
-import logging_pool
 import signal
-import sys
-import time
 import backoff
-import threading
 from config import load_config
 from conversation import Conversation, ChatLine
 from functools import partial
-from requests.exceptions import ChunkedEncodingError, ConnectionError, HTTPError, ReadTimeout
-from urllib3.exceptions import ProtocolError
-import os
-import threading
-from util import makeusi
-from util import switchusiuci
+from requests.exceptions import HTTPError, ReadTimeout
+from util import switchusiuci,makeusi,makesfenfromfen
 
 logger = logging.getLogger(__name__)
 
@@ -70,12 +61,10 @@ def watch_control_stream(control_queue, li):
 
 def start(li, user_profile, engine_factory, config):
     challenge_config = config["challenge"]
-    max_games = challenge_config.get("concurrency", 1)
     logger.info("You're now connected to {} and awaiting challenges.".format(config["url"]))
     control_queue=multiprocessing.Manager().Queue()
     control_stream = Process(target=watch_control_stream, args=[control_queue,li])
     control_stream.start()
-    gamesip=[]
     while not terminated:
         event=control_queue.get()
         if event["type"] == "terminated":
@@ -101,8 +90,7 @@ def start(li, user_profile, engine_factory, config):
         elif event["type"] == "gameStart":
             logger.info("game detected")
             game_id = event["game"]["id"]
-            gamesip.append(threading.Thread(target=play_game,args=(li, game_id, engine_factory, user_profile, config,)))
-            gamesip[-1].start()
+            play_game(li, game_id, engine_factory, user_profile, config)
             
     logger.info("Terminated")
     control_stream.terminate()
@@ -114,12 +102,10 @@ ponder_results = {}
 def play_game(li, game_id, engine_factory, user_profile, config):
     response = li.get_game_stream(game_id)
     lines = response.iter_lines()
-    bullet=False
     #Initial response of stream will be the full game info. Store it
     initial_state = json.loads(next(lines).decode('utf-8'))
     game = model.Game(initial_state, user_profile["username"], li.baseUrl, config.get("abort_time", 20))
     board = setup_board(game)
-    cfg = config["engine"]
     
     engineeng = engine_factory(board)
 
